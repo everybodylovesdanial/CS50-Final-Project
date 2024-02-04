@@ -1,1 +1,111 @@
+{% extends "index.html" %}
+
+{% block main %}
+
+<nav class="border navbar navbar-expand-md navbar-dark" style="background-color: #afc3cc;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/" style="font-size: 24px; font-weight: bold; color: #007BFF;">
+        <span>NIMBUS</span>
+      </a>
+        <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav nav-pills ms-auto mt-2 ">
+                  <li class="nav-item">
+                    <a class="nav-link active text-white" aria-current="page" href="/">Weather</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-white" href="/flood">Flood</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-white" href="/earthquake">Earthquake</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-white" href="/satellite">Satellite</a>
+                  </li>
+                </ul>
+        </div>
+    </div>
+</nav>
+
+
+  <form action="/" method="post">
+      <div class="container">
+          <div class="page-input">
+              <h5>Enter a City Name</h5>
+              <input autocomplete="off" autofocus class="city-input" id="city" name="city" placeholder="Eg. New York, London, Tokyo" type="text">
+
+              <button class="search-btn" type="submit">Search</button>
+
+              <div class="separator"></div>
+
+              <button class="location-btn" type="button" id="use-location-btn">Use Current Location</button>
+
+              <script>
+                document.getElementById('use-location-btn').addEventListener('click', function() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            document.getElementById('latitude-input').value = position.coords.latitude;
+                            document.getElementById('longitude-input').value = position.coords.longitude;
+                            // Submit the form
+                            document.forms[0].submit();
+                          });
+                      } else {
+                          alert('Geolocation is not supported by your browser.');
+                      }
+                  });
+              </script>
+
+              <input type="hidden" id="latitude-input" name="latitude">
+              <input type="hidden" id="longitude-input" name="longitude">
+
+          </div>
+
+
+          <div class="weather-data">
+              <div class="current-weather">
+                {% if error_message %}
+                  <div style="color: black">
+                    <strong>Error:</strong> {{ error_message}}
+                  </div>
+                {% else %}
+                <div class="details">
+                  <h2>{{ current.city }}, {{ current.country }} </h2>
+                  <h5>{{ current.day }}, {{ current.date }} </h5>
+                  <hr>
+                  <h6>Temperature | {{ current.temperature }}°C</h6>
+                  <h6>Description | {{ current.description }}</h6>
+                  <h6>Air Quality | {{ current.air_quality }}</h6>
+                </div>
+                <div class="icon">
+                  <img class="weather-icon" src="{{ current.icon }}" alt="Weather Icon">
+                </div>
+              </div>
+
+                <div class="days-forecast">
+                  <h2>2-Day Forecast</h2>
+                  <ul class="weather-cards">
+                  {% for day in forecast %}
+                    <li class="card">
+                      <h3>{{ day.day }}</h3>
+                      <img class="weather-icon" src="{{ day.icon }}" alt="Weather Icon">
+                      <h6>H: {{ day.max_temp }}°C</h6>
+                      <h6>L: {{ day.min_temp }}°C</h6>
+                      <h6>Description: {{ day.description }}</h6>
+                    </li>
+                  {% endfor %}
+                  </ul>
+              </div>
+          </div>
+      </div>
+      <footer class="text-center mt-3">
+        <p>Powered by <a href="https://www.weatherapi.com/" title="Free Weather API">WeatherAPI.com</a></p>
+      </footer>
+  </form>
+{% endif %}
+
+{% endblock %}
+
+
+
+
+
 

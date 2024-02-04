@@ -1,0 +1,97 @@
+{% extends "index.html" %}
+
+{% block main %}
+
+<div class="container-fluid p-0">
+  <nav class="border navbar navbar-expand-md navbar-dark" style="background-color: #afc3cc;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/" style="font-size: 24px; font-weight: bold; color: #007BFF;">
+          <span>NIMBUS</span>
+        </a>
+          <div class="collapse navbar-collapse" id="navbar">
+                  <ul class="nav nav-pills ms-auto mt-2 ">
+                    <li class="nav-item">
+                      <a class="nav-link text-white" href="/">Weather</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-white" aria-current="page" href="/flood">Flood</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" aria-current="page" href="/earthquake">Earthquake</a>
+                      </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-white" href="/satellite">Satellite</a>
+                    </li>
+                  </ul>
+          </div>
+      </div>
+  </nav>
+
+  <div class="alert alert-warning mb-0 text-center" role="alert" style="height: 40px; line-height: 8px;">
+      <strong>Note:</strong> This feature is only available in Malaysia
+  </div>
+</div>
+
+
+  <form action="/earthquake" method="POST">
+      <div class="container">
+          <div class="page-input">
+
+              <button class="location-btn" type="button" id="use-location-btn">Use Current Location</button>
+
+              <script>
+                document.getElementById('use-location-btn').addEventListener('click', function() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            document.getElementById('latitude-input').value = position.coords.latitude;
+                            document.getElementById('longitude-input').value = position.coords.longitude;
+                            // Submit the form
+                            document.forms[0].submit();
+                          });
+                      } else {
+                          alert('Geolocation is not supported by your browser.');
+                      }
+                  });
+              </script>
+
+              <input type="hidden" id="latitude-input" name="latitude">
+              <input type="hidden" id="longitude-input" name="longitude">
+
+              <p></p>
+
+          {% if error_message %}
+            <p>{{ error_message }}</p>
+          {% else %}
+
+          </div>
+
+          {% if state %}
+          <div class="container1">
+            <div class="flood-data">
+                <h4>{{ district }}, {{ state }}</h4>
+                <hr>
+                {% for entry in data %}
+                  <div>
+                    <h4>Nearest Earthquake:</h4>
+                    <h6>Epicenter: {{ entry.location_original }}</h6>
+                    <h6>Date: {{ date }}</h6>
+                    <h6>Distance: {{ distance }} KM from current location</h6>
+                    <hr>
+                    <h4>Details:</h4>
+                    <h6>Magnitude: {{ entry.magdefault }}</h6>
+                    <h6>Depth: {{ depth }} KM</h6>
+                    <h6>Status: {{ entry.status }}</h6>
+                  </div>
+                {% endfor %}
+            </div>
+          </div>
+      </div>
+
+      <footer class="text-center mt-3">
+        <p>Retrieved from <a href="https://developer.data.gov.my/realtime-api/weather" title="DOID">DATA.GOV.MY</a></p>
+      </footer>
+          {% endif %}
+          {% endif %}
+  </form>
+
+{% endblock %}

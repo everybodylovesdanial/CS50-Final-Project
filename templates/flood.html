@@ -1,0 +1,117 @@
+{% extends "index.html" %}
+
+{% block main %}
+
+<div class="container-fluid p-0">
+  <nav class="border navbar navbar-expand-md navbar-dark" style="background-color: #afc3cc;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/" style="font-size: 24px; font-weight: bold; color: #007BFF;">
+          <span>NIMBUS</span>
+        </a>
+          <div class="collapse navbar-collapse" id="navbar">
+                  <ul class="nav nav-pills ms-auto mt-2 ">
+                    <li class="nav-item">
+                      <a class="nav-link text-white" href="/">Weather</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active text-white" aria-current="page" href="/flood">Flood</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-white" href="/earthquake">Earthquake</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-white" href="/satellite">Satellite</a>
+                    </li>
+                  </ul>
+          </div>
+      </div>
+  </nav>
+
+  <div class="alert alert-warning mb-0 text-center" role="alert" style="height: 40px; line-height: 8px;">
+      <strong>Note:</strong> This feature is only available in Malaysia
+  </div>
+</div>
+
+
+  <form action="/flood" method="post">
+      <div class="container">
+          <div class="page-input">
+
+              <button class="location-btn" type="button" id="use-location-btn">Use Current Location</button>
+
+              <script>
+                document.getElementById('use-location-btn').addEventListener('click', function() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            document.getElementById('latitude-input').value = position.coords.latitude;
+                            document.getElementById('longitude-input').value = position.coords.longitude;
+                            // Submit the form
+                            document.forms[0].submit();
+                          });
+                      } else {
+                          alert('Geolocation is not supported by your browser.');
+                      }
+                  });
+              </script>
+
+              <input type="hidden" id="latitude-input" name="latitude">
+              <input type="hidden" id="longitude-input" name="longitude">
+
+              <p></p>
+
+          </div>
+
+          {% if state %}
+          <div class="container1">
+            <div class="flood-data">
+            {% if error_message %}
+              <div style="color: red;">
+                <strong>Error:</strong> {{ error_message}}
+              </div>
+            {% else %}
+                <h4>{{ district }}, {{ state }}</h4>
+                <hr>
+                {% for entry in data %}
+                  <div>
+                    <h5>Location:</h5>
+                    <h6>Nearest Monitoring Station: {{ entry.station_name }}</h6>
+                    <h6>Main Basin: {{ entry.main_basin }}</h6>
+                    <h6>Sub Basin: {{ entry.sub_basin }}</h6>
+                    <hr>
+                    <h5>Water Level:</h5>
+                    <h6>Normal Level: {{ entry.water_level_normal_level }} m</h6>
+                    <h6>Danger Level: {{ entry.water_level_danger_level }} m</h6>
+                    <h6>Current Level: 0.7 m</h6>
+                    <h6>Trend: {{ entry.water_level_trend }}</h6>
+                    <h6>Condition: {{ entry.water_level_indicator }}</h6>
+                    <hr>
+                    <h5>Rainfall:</h5>
+                    <h6>Current Status: {{ entry.rainfall_indicator }}</h6>
+                    <h6>Rainfall Today: {{ entry.rainfall_total_today }} mm</h6>
+                    <hr>
+                    <h6>Last Updated: {{ entry.water_level_update_datetime }}</h6>
+                  </div>
+                {% endfor %}
+            </div>
+          </div>
+      </div>
+      <footer class="text-center mt-3">
+        <p>Retrieved from <a href="https://publicinfobanjir.water.gov.my/main/?lang=en" title="DOID">PUBLICINFOBANJIR.WATER.GOV.MY</a></p>
+      </footer>
+          {% endif %}
+          {% endif %}
+
+  </form>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+{{ entry.water_level_current }}
